@@ -1,0 +1,30 @@
+.msg-center-img {
+  display: block;
+  margin: 40px auto 30px;
+  width: 50px;
+  height: 50px;
+  background-color: pink;
+}
+.msg-p-tips {
+  font-size: 16px;
+  padding: 0 15px;
+}
+.msg-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.msg-code {
+  font-size: 14px;
+  border-radius: 20px;
+  text-align: center;
+  padding: 10px;
+  width: 110px;
+  outline: none;
+  border: none;
+}
+.msg-next {
+  border-radius: 30px;
+  width: 90%;
+  margin: 0 auto 30px;
+}

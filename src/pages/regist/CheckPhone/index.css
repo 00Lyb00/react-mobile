@@ -1,0 +1,18 @@
+.phone-left {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+.phone-content{
+  border-bottom: 0.5px solid rgb(216, 214, 214);
+  margin: 30px 0;
+}
+.button-next {
+  border-radius: 30px;
+  width: 90%;
+  margin: 0 auto;
+}
+.protocol {
+  display: block;
+  text-align: left;
+}
