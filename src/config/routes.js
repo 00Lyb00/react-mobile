@@ -1,5 +1,6 @@
 import CheckPhone from '@pages/regist/CheckPhone'
 import ShortMsg from '@pages/regist/ShortMsg'
+import SetPassword from '@pages/regist/SetPassword'
 // 路由配置
 const routes = [
   {
@@ -10,6 +11,11 @@ const routes = [
   {
     path: '/regist/shortMsg',
     component: ShortMsg,
+    excat: true
+  },
+  {
+    path: '/regist/setPassword',
+    component: SetPassword,
     excat: true
   }
 ]

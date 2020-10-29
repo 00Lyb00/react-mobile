@@ -1,8 +1,12 @@
 import React, { Component } from "react";
 
-import { WingBlank, InputItem, Button } from "antd-mobile";
+import { WingBlank, InputItem, Button, Toast, Modal } from "antd-mobile";
 import { createForm } from "rc-form";
 import Nav from "@components/Nav";
+
+import { reqIfCode } from "@api/regist";
+import { reqShortSend } from "@api/login";
+
 import "./index.css";
 class ShortMsg extends Component {
   state = {
@@ -28,14 +32,21 @@ class ShortMsg extends Component {
     callback();
   };
   componentDidMount() {
-    // 开启定时器
+    // 发送请求，开启定时器
+    this.getCode();
+  }
+
+  // 定时器
+  setTime = () => {
     this.timeId = setInterval(() => {
       let { count } = this.state;
       // 判断
       if (count <= 1) {
         clearInterval(this.timeId);
+        delete this.timeId;
         this.setState({
           codeFlag: false,
+          count: 10,
         });
         return;
       }
@@ -43,7 +54,64 @@ class ShortMsg extends Component {
         count: count - 1,
       });
     }, 1000);
-  }
+  };
+
+  // 获取验证码
+  getVerifyCode = async () => {
+    if (this.timeId) return;
+    console.log("来了");
+    // 弹出对话框，是否需要送去验证码
+    // 获取phone,和code
+    const phone = window.localStorage.getItem("phone");
+    Modal.alert(
+      "",
+      <span>
+        我们将发送短信/语音验证码至：
+        <span style={{ display: "block" }}>{phone}</span>
+      </span>,
+      [
+        {
+          text: "取消",
+        },
+        {
+          text: "确认",
+          onPress: this.getCode,
+          style: { backgroundColor: "red", color: "white" },
+        },
+      ]
+    );
+  };
+
+  // 向后台获取验证码
+  getCode = async () => {
+    // 修改状态
+    this.setState({
+      codeFlag: true,
+    });
+    this.setTime();
+    try {
+      // 发送请求，获取验证码
+      await reqShortSend(window.localStorage.getItem("phone"));
+    } catch (e) {
+      Toast.fail(e, 3);
+    }
+  };
+
+  // 发送验证码给后台
+  shortSend = async () => {
+    try {
+      const phone = window.localStorage.getItem("phone");
+      const code = this.props.form.getFieldValue("code");
+      // 发送请求
+      await reqIfCode(phone, code);
+      // 跳转短信界面
+      this.props.history.push("/regist/setPassword");
+      console.log("success");
+    } catch (e) {
+      Toast.fail(e, 3);
+    }
+  };
+
   render() {
     const { getFieldProps } = this.props.form;
     const { flag, codeFlag, count } = this.state;
@@ -66,7 +134,6 @@ class ShortMsg extends Component {
                 // 表单验证规则
                 rules: [{ validator: this.validator }],
               })}
-              maxLength="3"
             ></InputItem>
             <button
               className="msg-code"
@@ -76,12 +143,19 @@ class ShortMsg extends Component {
                   : "rgb(247, 199, 199)",
                 color: codeFlag ? "rgb(112, 110, 110)" : "rgb(250, 121, 121)",
               }}
+              disabled={codeFlag}
+              onTouchEnd={this.getVerifyCode}
             >
               {codeFlag ? `重新发送(${count}s)` : "获取验证码"}
             </button>
           </div>
           {/* 下一步 */}
-          <Button type="warning" disabled={flag} className="msg-next">
+          <Button
+            type="warning"
+            disabled={flag}
+            onClick={this.shortSend}
+            className="msg-next"
+          >
             下一步
           </Button>
           <p style={{ color: " rgb(185, 182, 182)", paddingLeft: "30px" }}>

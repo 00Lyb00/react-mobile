@@ -33,7 +33,6 @@ class CheckPhone extends Component {
         // 发送请求
         await reqShortSend(phone);
         // 跳转短信界面
-        // console.log(this.props);
         this.props.history.push("/regist/shortMsg");
       } catch (e) {
         Toast.fail(e, 3);
@@ -93,6 +92,8 @@ class CheckPhone extends Component {
     const phone = this.props.form.getFieldValue("phone");
     await reqIfPhoneRegist(phone);
     console.log("success");
+    // 存储电话号
+    window.localStorage.setItem("phone", phone);
     // 发送短信提示对话框
     // this.showAlert(phone);
     Modal.alert(
